@@ -13,7 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.List;
+
 import ai.elimu.herufi.R;
+import ai.elimu.herufi.util.ContentProviderHelper;
+import ai.elimu.model.v2.gson.content.LetterGson;
 
 public class HomeFragment extends Fragment {
 
@@ -39,6 +43,7 @@ public class HomeFragment extends Fragment {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-
+        List<LetterGson> letterGsons = ContentProviderHelper.getLetterGsons(getContext());
+        Log.i(getClass().getName(), "letterGsons.size(): " + letterGsons.size());
     }
 }

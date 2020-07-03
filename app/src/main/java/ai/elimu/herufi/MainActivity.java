@@ -1,6 +1,7 @@
 package ai.elimu.herufi;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -14,8 +15,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
+        // Verify that the content-provider APK has been installed
+        // TODO
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -27,4 +34,11 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+
+    }
 }

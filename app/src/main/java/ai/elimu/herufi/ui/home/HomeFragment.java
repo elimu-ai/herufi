@@ -1,6 +1,7 @@
 package ai.elimu.herufi.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.List;
+
 import ai.elimu.herufi.R;
+import ai.elimu.herufi.util.ContentProviderHelper;
+import ai.elimu.model.v2.gson.content.LetterGson;
 
 public class HomeFragment extends Fragment {
 
@@ -31,5 +36,14 @@ public class HomeFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+        List<LetterGson> letterGsons = ContentProviderHelper.getLetterGsons(getContext());
+        Log.i(getClass().getName(), "letterGsons.size(): " + letterGsons.size());
     }
 }

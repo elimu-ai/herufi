@@ -1,6 +1,7 @@
 package ai.elimu.herufi.ui.notifications;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,5 +32,13 @@ public class NotificationsFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+
     }
 }

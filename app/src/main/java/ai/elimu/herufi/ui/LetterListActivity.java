@@ -1,6 +1,7 @@
 package ai.elimu.herufi.ui;
 
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.R;
 import ai.elimu.herufi.util.ContentProviderHelper;
 import ai.elimu.model.v2.gson.content.LetterGson;
@@ -47,12 +49,17 @@ public class LetterListActivity extends AppCompatActivity {
             TextView textView = letterView.findViewById(R.id.letter_view_text_view);
             textView.setText(letterGson.getText());
 
+            // Play letter sound when pressed
             letterView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.i(getClass().getName(), "letterView onClick");
 
                     Log.i(getClass().getName(), "letterGson.getText(): '" + letterGson.getText() + "'");
+
+                    BaseApplication baseApplication = (BaseApplication) getApplication();
+                    TextToSpeech tts = baseApplication.getTTS();
+                    tts.speak(letterGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "letter_" + letterGson.getId());
                 }
             });
 

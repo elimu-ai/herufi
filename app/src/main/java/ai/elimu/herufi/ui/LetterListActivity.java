@@ -41,10 +41,21 @@ public class LetterListActivity extends AppCompatActivity {
 
         // Create a view for each letter in the list
         flexboxLayout.removeAllViews();
-        for (LetterGson letterGson : letterGsons) {
+        for (final LetterGson letterGson : letterGsons) {
             View letterView = LayoutInflater.from(this).inflate(R.layout.activity_letter_list_letter_view, flexboxLayout, false);
+
             TextView textView = letterView.findViewById(R.id.letter_view_text_view);
             textView.setText(letterGson.getText());
+
+            letterView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(getClass().getName(), "letterView onClick");
+
+                    Log.i(getClass().getName(), "letterGson.getText(): '" + letterGson.getText() + "'");
+                }
+            });
+
             flexboxLayout.addView(letterView);
         }
     }

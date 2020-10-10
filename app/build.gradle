@@ -29,6 +29,13 @@ android {
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider.debug"')
             buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics.debug"')
         }
+        qa_test {
+            applicationIdSuffix ".test"
+            versionNameSuffix "-test"
+            manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider.test", analyticsApplicationId: "ai.elimu.analytics.test"]
+            buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider.test"')
+            buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics.test"')
+        }
         release {
             minifyEnabled false
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider", analyticsApplicationId: "ai.elimu.analytics"]
@@ -40,7 +47,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'ai.elimu:model:2.0.23'
+    implementation 'ai.elimu:model:2.0.24'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'

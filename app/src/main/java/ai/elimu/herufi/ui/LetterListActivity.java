@@ -14,9 +14,10 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import ai.elimu.content_provider.utils.ContentProviderHelper;
 import ai.elimu.herufi.BaseApplication;
+import ai.elimu.herufi.BuildConfig;
 import ai.elimu.herufi.R;
-import ai.elimu.herufi.util.ContentProviderHelper;
 import ai.elimu.model.v2.gson.content.LetterGson;
 
 public class LetterListActivity extends AppCompatActivity {
@@ -38,7 +39,7 @@ public class LetterListActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        List<LetterGson> letterGsons = ContentProviderHelper.getLetterGsons(getApplicationContext());
+        List<LetterGson> letterGsons = ContentProviderHelper.getLetterGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(getClass().getName(), "letterGsons.size(): " + letterGsons.size());
 
         // Create a view for each letter in the list

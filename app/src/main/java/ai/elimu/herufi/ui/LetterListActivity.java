@@ -14,10 +14,12 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
 import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.BuildConfig;
 import ai.elimu.herufi.R;
+import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.LetterGson;
 
 public class LetterListActivity extends AppCompatActivity {
@@ -61,6 +63,9 @@ public class LetterListActivity extends AppCompatActivity {
                     BaseApplication baseApplication = (BaseApplication) getApplication();
                     TextToSpeech tts = baseApplication.getTTS();
                     tts.speak(letterGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "letter_" + letterGson.getId());
+
+                    // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                    LearningEventUtil.reportLetterLearningEvent(BuildConfig.APPLICATION_ID, letterGson, LearningEventType.LETTER_PRESSED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                 }
             });
 

@@ -48,9 +48,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'ai.elimu:model:2.0.24'
-    implementation 'ai.elimu:content-provider-utils:1.1.0@aar'
-    implementation 'ai.elimu.analytics:utils:1.0.2@aar'
+    implementation 'com.github.elimu-ai:model:model-2.0.34' // See https://jitpack.io/#elimu-ai/model
+    implementation 'com.github.elimu-ai:content-provider:1.2.7@aar' // See https://jitpack.io/#elimu-ai/content-provider
+    implementation 'com.github.elimu-ai:analytics:3.1.2@aar' // See https://jitpack.io/#elimu-ai/analytics
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'

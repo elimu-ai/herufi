@@ -15,7 +15,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
-import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.BuildConfig;
 import ai.elimu.herufi.R;
@@ -41,7 +41,7 @@ public class LetterListActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        List<LetterGson> letterGsons = ContentProviderHelper.getLetterGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        List<LetterGson> letterGsons = ContentProviderUtil.getAvailableLetterGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID, BuildConfig.ANALYTICS_APPLICATION_ID);
         Log.i(getClass().getName(), "letterGsons.size(): " + letterGsons.size());
 
         // Create a view for each letter in the list
@@ -65,7 +65,7 @@ public class LetterListActivity extends AppCompatActivity {
                     tts.speak(letterGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "letter_" + letterGson.getId());
 
                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                    LearningEventUtil.reportLetterLearningEvent(BuildConfig.APPLICATION_ID, letterGson, LearningEventType.LETTER_PRESSED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                    LearningEventUtil.reportLetterLearningEvent(letterGson, LearningEventType.LETTER_PRESSED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                 }
             });
 

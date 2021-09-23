@@ -19,7 +19,7 @@ import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.BuildConfig;
 import ai.elimu.herufi.R;
-import ai.elimu.model.enums.analytics.LearningEventType;
+import ai.elimu.model.v2.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.LetterGson;
 
 public class LetterListActivity extends AppCompatActivity {

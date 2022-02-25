@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "ai.elimu.herufi"
@@ -17,8 +16,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -49,8 +48,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'com.github.elimu-ai:model:model-2.0.52' // See https://jitpack.io/#elimu-ai/model
-    implementation 'com.github.elimu-ai:content-provider:1.2.8@aar' // See https://jitpack.io/#elimu-ai/content-provider
+    implementation 'com.github.elimu-ai:model:model-2.0.53' // See https://jitpack.io/#elimu-ai/model
+    implementation 'com.github.elimu-ai:content-provider:1.2.10@aar' // See https://jitpack.io/#elimu-ai/content-provider
     implementation 'com.github.elimu-ai:analytics:3.1.11@aar' // See https://jitpack.io/#elimu-ai/analytics
 
     implementation 'androidx.appcompat:appcompat:1.4.1'

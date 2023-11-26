@@ -8,6 +8,17 @@ Android application for learning letter identification
 
 Note: This app depends on the [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider) to be installed.
 
+## Development 👩🏽‍💻
+
+```
+./gradlew clean build
+```
+
+### Gradle Upgrade
+
+```
+./gradlew wrapper --gradle-version x.x.x --distribution-type all
+```
 
 ---
 

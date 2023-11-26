@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ai.elimu.herufi">
 
+    <uses-permission android:name="${contentProviderApplicationId}.provider.READ" />
+
+    <queries>
+        <provider android:authorities="${contentProviderApplicationId}.provider.letter_provider" />
+    </queries>
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"

@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import ai.elimu.herufi.ui.LetterListActivity;
+import ai.elimu.herufi.ui.LetterSoundListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        Intent intent = new Intent(getApplicationContext(), LetterListActivity.class);
+//        Intent intent = new Intent(getApplicationContext(), LetterListActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LetterSoundListActivity.class);
         startActivity(intent);
         finish();
     }

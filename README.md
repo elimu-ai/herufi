@@ -22,6 +22,20 @@ Note: This app depends on the [elimu.ai Content Provider](https://github.com/eli
 
 ---
 
-elimu.ai - Free open source learning software for out-of-school children ✨🚀
-
-[Website 🌐](https://elimu.ai) | [Wiki 📃](https://github.com/elimu-ai/wiki#readme) | [Projects 👩🏽‍💻](https://github.com/orgs/elimu-ai/projects?query=is%3Aopen) | [Milestones 🎯](https://github.com/elimu-ai/wiki/milestones) | [Community 👋🏽](https://github.com/elimu-ai/wiki#open-source-community)
+<p align="center">
+  <img src="https://github.com/elimu-ai/webapp/blob/main/src/main/webapp/static/img/logo-text-256x78.png" />
+</p>
+<p align="center">
+  elimu.ai - Free open source learning software for out-of-school children ✨🚀
+</p>
+<p align="center">
+  <a href="https://elimu.ai">Website 🌐</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/elimu-ai/wiki#readme">Wiki 📃</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/orgs/elimu-ai/projects?query=is%3Aopen">Projects 👩🏽‍💻</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/elimu-ai/wiki/milestones">Milestones 🎯</a>
+  &nbsp;•&nbsp;
+  <a href="https://github.com/elimu-ai/wiki#open-source-community">Community 👋🏽</a>
+</p>

@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace 'ai.elimu.herufi'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ai.elimu.herufi"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1000002
         versionName "1.0.2-SNAPSHOT"
 

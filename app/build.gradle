@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace 'ai.elimu.herufi'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ai.elimu.herufi"
         minSdkVersion 24
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1000002
         versionName "1.0.2-SNAPSHOT"
 
@@ -17,8 +17,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildTypes {
@@ -51,7 +51,7 @@ dependencies {
 
     implementation 'com.github.elimu-ai:model:model-2.0.80' // See https://jitpack.io/#elimu-ai/model
     implementation 'com.github.elimu-ai:content-provider:1.2.26@aar' // See https://jitpack.io/#elimu-ai/content-provider
-    implementation 'com.github.elimu-ai:analytics:3.1.11@aar' // See https://jitpack.io/#elimu-ai/analytics
+    implementation 'com.github.elimu-ai:analytics:3.1.27@aar' // See https://jitpack.io/#elimu-ai/analytics
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

@@ -49,18 +49,18 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'com.github.elimu-ai:model:model-2.0.83' // See https://jitpack.io/#elimu-ai/model
-    implementation 'com.github.elimu-ai:content-provider:1.2.28@aar' // See https://jitpack.io/#elimu-ai/content-provider
-    implementation 'com.github.elimu-ai:analytics:3.1.27@aar' // See https://jitpack.io/#elimu-ai/analytics
+    implementation libs.elimu.model // See https://jitpack.io/#elimu-ai/model
+    implementation libs.elimu.content.provider // See https://jitpack.io/#elimu-ai/content-provider
+    implementation libs.elimu.analytics // See https://jitpack.io/#elimu-ai/analytics
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraint.layout
 
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation libs.material
+    implementation libs.flexbox
 
-    testImplementation 'junit:junit:4.13.2'
+    testImplementation libs.junit
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso
 }

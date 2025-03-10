@@ -10,6 +10,8 @@ constraintLayout = "2.1.4"
 appCompat = "1.6.1"
 androidXJunit = "1.1.5"
 androidXEspresso = "3.5.1"
+coreKtx = "1.15.0"
+kotlin = "2.1.10"
 
 [libraries]
 elimu-model = { group = "com.github.elimu-ai", name = "model", version.ref = "elimuModel" }
@@ -23,5 +25,7 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "a
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 [plugins]
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

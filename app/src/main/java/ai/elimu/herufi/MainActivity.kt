@@ -1,35 +1,29 @@
-package ai.elimu.herufi;
+package ai.elimu.herufi
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
+import ai.elimu.herufi.ui.LetterSoundListActivity
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 
-import androidx.appcompat.app.AppCompatActivity;
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(javaClass.name, "onCreate")
+        super.onCreate(savedInstanceState)
 
-import ai.elimu.herufi.ui.LetterListActivity;
-import ai.elimu.herufi.ui.LetterSoundListActivity;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.i(getClass().getName(), "onCreate");
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main)
 
         // Verify that the content-provider APK has been installed
         // TODO
     }
 
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
+    override fun onStart() {
+        Log.i(javaClass.name, "onStart")
+        super.onStart()
 
-//        Intent intent = new Intent(getApplicationContext(), LetterListActivity.class);
-        Intent intent = new Intent(getApplicationContext(), LetterSoundListActivity.class);
-        startActivity(intent);
-        finish();
+        //        Intent intent = new Intent(getApplicationContext(), LetterListActivity.class);
+        val intent = Intent(applicationContext, LetterSoundListActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

@@ -38,7 +38,7 @@ public class LetterSoundListActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        List<LetterSoundGson> letterSoundGsons = ContentProviderUtil.getAllLetterSoundGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        List<LetterSoundGson> letterSoundGsons = ContentProviderUtil.INSTANCE.getAllLetterSoundGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(getClass().getName(), "letterSoundGsons.size(): " + letterSoundGsons.size());
 
         // Create a view for each letter-sound correspondence in the list

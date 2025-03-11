@@ -41,7 +41,7 @@ public class LetterListActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        List<LetterGson> letterGsons = ContentProviderUtil.getAvailableLetterGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID, BuildConfig.ANALYTICS_APPLICATION_ID);
+        List<LetterGson> letterGsons = ContentProviderUtil.INSTANCE.getAvailableLetterGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID, BuildConfig.ANALYTICS_APPLICATION_ID);
         Log.i(getClass().getName(), "letterGsons.size(): " + letterGsons.size());
 
         // Create a view for each letter in the list

@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("ai.elimu.herufi", appContext.getPackageName());
+        assertEquals("ai.elimu.herufi.debug", appContext.getPackageName());
     }
 }

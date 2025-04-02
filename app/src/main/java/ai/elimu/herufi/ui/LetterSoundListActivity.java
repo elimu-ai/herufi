@@ -50,9 +50,9 @@ public class LetterSoundListActivity extends AppCompatActivity {
             View letterSoundView = LayoutInflater.from(this).inflate(R.layout.activity_letter_sound_list_letter_view, flexboxLayout, false);
 
             TextView textView = letterSoundView.findViewById(R.id.letter_sound_view_text_view);
-            String valuesIpa = letterSoundGson.getSounds().stream().map(SoundGson::getValueIpa).collect(Collectors.joining());
+            String sounds = letterSoundGson.getSounds().stream().map(SoundGson::getValueIpa).collect(Collectors.joining());
             String letters = letterSoundGson.getLetters().stream().map(LetterGson::getText).collect(Collectors.joining());
-            textView.setText("/" + valuesIpa + "/\n⬇\n\"" + letters + "\"");
+            textView.setText("/" + sounds + "/\n⬇\n\"" + letters + "\"");
 
             // Play sound when pressed
             letterSoundView.setOnClickListener(new View.OnClickListener() {

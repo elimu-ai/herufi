@@ -14,6 +14,7 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.BuildConfig;
@@ -67,7 +68,7 @@ public class LetterSoundListActivity extends AppCompatActivity {
                     tts.speak(letters, TextToSpeech.QUEUE_FLUSH, null, "letter_sound_" + letterSoundGson.getId());
 
                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-//                    LearningEventUtil.reportLetterSoundLearningEvent(letterSoundGson, LearningEventType.LETTER_SOUND_PRESSED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                    LearningEventUtil.reportLetterSoundLearningEvent(letterSoundGson, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                 }
             });
 

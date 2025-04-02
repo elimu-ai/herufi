@@ -64,7 +64,7 @@ public class LetterSoundListActivity extends AppCompatActivity {
 
                     BaseApplication baseApplication = (BaseApplication) getApplication();
                     TextToSpeech tts = baseApplication.getTTS();
-//                    tts.speak(letterSoundGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "letter_sound_" + letterSoundGson.getId());
+                    tts.speak(letters, TextToSpeech.QUEUE_FLUSH, null, "letter_sound_" + letterSoundGson.getId());
 
                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
 //                    LearningEventUtil.reportLetterSoundLearningEvent(letterSoundGson, LearningEventType.LETTER_SOUND_PRESSED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);

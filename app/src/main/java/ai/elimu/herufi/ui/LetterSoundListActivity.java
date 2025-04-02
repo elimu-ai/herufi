@@ -12,12 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.herufi.BaseApplication;
 import ai.elimu.herufi.BuildConfig;
 import ai.elimu.herufi.R;
+import ai.elimu.model.v2.gson.content.LetterGson;
 import ai.elimu.model.v2.gson.content.LetterSoundGson;
+import ai.elimu.model.v2.gson.content.SoundGson;
 
 public class LetterSoundListActivity extends AppCompatActivity {
 
@@ -47,7 +50,9 @@ public class LetterSoundListActivity extends AppCompatActivity {
             View letterSoundView = LayoutInflater.from(this).inflate(R.layout.activity_letter_sound_list_letter_view, flexboxLayout, false);
 
             TextView textView = letterSoundView.findViewById(R.id.letter_sound_view_text_view);
-            textView.setText("id " + letterSoundGson.getId());
+            String valuesIpa = letterSoundGson.getSounds().stream().map(SoundGson::getValueIpa).collect(Collectors.joining());
+            String letters = letterSoundGson.getLetters().stream().map(LetterGson::getText).collect(Collectors.joining());
+            textView.setText("/" + valuesIpa + "/\n⬇\n\"" + letters + "\"");
 
             // Play sound when pressed
             letterSoundView.setOnClickListener(new View.OnClickListener() {

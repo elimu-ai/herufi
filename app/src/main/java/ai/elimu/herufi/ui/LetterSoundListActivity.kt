@@ -1,6 +1,8 @@
 package ai.elimu.herufi.ui
 
 import ai.elimu.analytics.utils.LearningEventUtil
+import ai.elimu.common.utils.ui.setLightStatusBar
+import ai.elimu.common.utils.ui.setStatusBarColorCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllLetterSoundGsons
 import ai.elimu.herufi.BaseApplication
 import ai.elimu.herufi.BuildConfig
@@ -27,6 +29,10 @@ class LetterSoundListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_letter_sound_list)
 
         flexboxLayout = findViewById(R.id.letter_sound_list_flexbox_layout)
+        window.apply {
+            setLightStatusBar()
+            setStatusBarColorCompat(R.color.colorPrimaryDark)
+        }
     }
 
     override fun onStart() {

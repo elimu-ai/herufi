@@ -6,7 +6,7 @@ material = "1.10.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
 
-constraintLayout = "2.1.4"
+constraintLayout = "2.2.1"
 appCompat = "1.6.1"
 androidXJunit = "1.1.5"
 androidXEspresso = "3.5.1"

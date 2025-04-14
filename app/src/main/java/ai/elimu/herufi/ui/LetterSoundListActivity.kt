@@ -7,28 +7,27 @@ import ai.elimu.content_provider.utils.ContentProviderUtil.getAllLetterSoundGson
 import ai.elimu.herufi.BaseApplication
 import ai.elimu.herufi.BuildConfig
 import ai.elimu.herufi.R
+import ai.elimu.herufi.databinding.ActivityLetterSoundListBinding
+import ai.elimu.herufi.databinding.ActivityLetterSoundListLetterViewBinding
 import ai.elimu.model.v2.gson.content.LetterGson
 import ai.elimu.model.v2.gson.content.SoundGson
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.flexbox.FlexboxLayout
 import java.util.stream.Collectors
 
 class LetterSoundListActivity : AppCompatActivity() {
-    private var flexboxLayout: FlexboxLayout? = null
+    private lateinit var binding: ActivityLetterSoundListBinding
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(javaClass.name, "onCreate")
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_letter_sound_list)
+        binding = ActivityLetterSoundListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        flexboxLayout = findViewById(R.id.letter_sound_list_flexbox_layout)
         window.apply {
             setLightStatusBar()
             setStatusBarColorCompat(R.color.colorPrimaryDark)
@@ -45,12 +44,11 @@ class LetterSoundListActivity : AppCompatActivity() {
         Log.i(javaClass.name, "letterSoundGsons.size(): " + letterSoundGsons.size)
 
         // Create a view for each letter-sound correspondence in the list
-        flexboxLayout!!.removeAllViews()
+        binding.letterSoundListFlexboxLayout.removeAllViews()
         for (letterSoundGson in letterSoundGsons) {
-            val letterSoundView = LayoutInflater.from(this)
-                .inflate(R.layout.activity_letter_sound_list_letter_view, flexboxLayout, false)
-
-            val textView = letterSoundView.findViewById<TextView>(R.id.letter_sound_view_text_view)
+            val letterSoundViewBinding = ActivityLetterSoundListLetterViewBinding.inflate(
+                layoutInflater, binding.letterSoundListFlexboxLayout, false
+            )
             val sounds =
                 letterSoundGson.sounds.stream().map { obj: SoundGson -> obj.valueIpa }.collect(
                     Collectors.joining()
@@ -59,10 +57,10 @@ class LetterSoundListActivity : AppCompatActivity() {
                 letterSoundGson.letters.stream().map { obj: LetterGson -> obj.text }.collect(
                     Collectors.joining()
                 )
-            textView.text = "/$sounds/\n⬇\n\"$letters\""
+            letterSoundViewBinding.letterSoundViewTextView.text = "/$sounds/\n⬇\n\"$letters\""
 
             // Play sound when pressed
-            letterSoundView.setOnClickListener(object : View.OnClickListener {
+            letterSoundViewBinding.root.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View) {
                     Log.i(javaClass.name, "letterView onClick")
 
@@ -85,7 +83,7 @@ class LetterSoundListActivity : AppCompatActivity() {
                 }
             })
 
-            flexboxLayout!!.addView(letterSoundView)
+            binding.letterSoundListFlexboxLayout.addView(letterSoundViewBinding.root)
         }
     }
 }

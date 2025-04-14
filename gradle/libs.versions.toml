@@ -10,7 +10,7 @@ flexbox = "3.0.0"
 constraintLayout = "2.1.4"
 appCompat = "1.6.1"
 androidXJunit = "1.2.1"
-androidXEspresso = "3.5.1"
+androidXEspresso = "3.6.1"
 coreKtx = "1.16.0"
 kotlin = "2.1.20"
 

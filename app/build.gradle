@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 apply plugin: 'com.android.application'
+apply plugin: 'maven-publish'
 
 android {
     namespace 'ai.elimu.herufi'
@@ -13,8 +14,6 @@ android {
         targetSdkVersion 35
         versionCode 1000005
         versionName "1.0.5-SNAPSHOT"
-
-        setProperty("archivesBaseName", "${applicationId}-${versionCode}")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,4 +66,15 @@ dependencies {
 
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso
+}
+
+publishing {
+    publications {
+        apk(MavenPublication) {
+            artifact("${buildDir}/outputs/apk/release/app-release-unsigned.apk")
+        }
+    }
+}
+tasks.named("publishApkPublicationToMavenLocal") {
+    mustRunAfter(":app:assembleRelease")
 }

@@ -68,7 +68,7 @@ class LetterSoundListActivity : AppCompatActivity() {
 
                     val baseApplication = application as BaseApplication
                     val tts = baseApplication.tts
-                    tts.speak(
+                    tts?.speak(
                         letters,
                         TextToSpeech.QUEUE_FLUSH,
                         null,

@@ -56,7 +56,7 @@ class LetterListActivity : AppCompatActivity() {
 
                     val baseApplication = application as BaseApplication
                     val tts = baseApplication.tts
-                    tts.speak(
+                    tts?.speak(
                         letterGson.text,
                         TextToSpeech.QUEUE_FLUSH,
                         null,

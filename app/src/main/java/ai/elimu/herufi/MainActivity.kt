@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         Log.i(javaClass.name, "onStart")
         super.onStart()
 
-        //        Intent intent = new Intent(getApplicationContext(), LetterListActivity.class);
         val intent = Intent(applicationContext, LetterSoundListActivity::class.java)
         startActivity(intent)
         finish()

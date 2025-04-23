@@ -27,7 +27,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.LetterListActivity" />
         <activity android:name=".ui.LetterSoundListActivity" />
     </application>
 </manifest>

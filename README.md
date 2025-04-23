@@ -1,6 +1,6 @@
 # Herufi 🔡
 
-[![Release](https://jitpack.io/v/elimu-ai/herufi.svg)](https://jitpack.io/#elimu-ai/herufi)
+[![Release](https://jitpack.io/v/ai.elimu/herufi.svg)](https://jitpack.io/#ai.elimu/herufi)
 
 Android application for learning letter identification
 

@@ -19,10 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import java.util.stream.Collectors
 
 class LetterSoundListActivity : AppCompatActivity() {
+    
+    private val TAG = "LetterSoundListActivity"
     private lateinit var binding: ActivityLetterSoundListBinding
 
     public override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(javaClass.name, "onCreate")
+        Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
         binding = ActivityLetterSoundListBinding.inflate(layoutInflater)
@@ -35,13 +37,13 @@ class LetterSoundListActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        Log.i(javaClass.name, "onStart")
+        Log.i(TAG, "onStart")
         super.onStart()
 
         val letterSoundGsons = getAllLetterSoundGsons(
             applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
         )
-        Log.i(javaClass.name, "letterSoundGsons.size(): " + letterSoundGsons.size)
+        Log.i(TAG, "letterSoundGsons.size(): " + letterSoundGsons.size)
 
         // Create a view for each letter-sound correspondence in the list
         binding.letterSoundListFlexboxLayout.removeAllViews()
@@ -62,9 +64,9 @@ class LetterSoundListActivity : AppCompatActivity() {
             // Play sound when pressed
             letterSoundViewBinding.root.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View) {
-                    Log.i(javaClass.name, "letterView onClick")
+                    Log.i(TAG, "letterView onClick")
 
-                    Log.i(javaClass.name, "letterSoundGson.getId(): '" + letterSoundGson.id + "'")
+                    Log.i(TAG, "letterSoundGson.getId(): '" + letterSoundGson.id + "'")
 
                     val baseApplication = application as BaseApplication
                     val tts = baseApplication.tts

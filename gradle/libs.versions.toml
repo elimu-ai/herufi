@@ -2,7 +2,7 @@
 elimuModel = "model-2.0.101"
 elimuAnalytics = "3.1.33"
 elimuContentProvider = "1.2.40"
-elimuCommonutils = "1.0.11"
+elimuCommonutils = "1.0.12"
 material = "1.12.0"
 junit = "4.13.2"
 flexbox = "3.0.0"

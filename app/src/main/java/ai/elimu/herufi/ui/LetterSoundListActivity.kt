@@ -1,10 +1,12 @@
 package ai.elimu.herufi.ui
 
 import ai.elimu.analytics.utils.LearningEventUtil
+import ai.elimu.common.utils.data.model.tts.QueueMode
 import ai.elimu.common.utils.ui.setLightStatusBar
 import ai.elimu.common.utils.ui.setStatusBarColorCompat
+import ai.elimu.common.utils.viewmodel.TextToSpeechViewModel
+import ai.elimu.common.utils.viewmodel.TextToSpeechViewModelImpl
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllLetterSoundGsons
-import ai.elimu.herufi.BaseApplication
 import ai.elimu.herufi.BuildConfig
 import ai.elimu.herufi.R
 import ai.elimu.herufi.databinding.ActivityLetterSoundListBinding
@@ -12,15 +14,18 @@ import ai.elimu.herufi.databinding.ActivityLetterSoundListLetterViewBinding
 import ai.elimu.model.v2.gson.content.LetterGson
 import ai.elimu.model.v2.gson.content.SoundGson
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.stream.Collectors
 
+@AndroidEntryPoint
 class LetterSoundListActivity : AppCompatActivity() {
     
     private val TAG = "LetterSoundListActivity"
     private lateinit var binding: ActivityLetterSoundListBinding
+    private lateinit var ttsViewModel: TextToSpeechViewModel
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -28,6 +33,8 @@ class LetterSoundListActivity : AppCompatActivity() {
 
         binding = ActivityLetterSoundListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]
 
         window.apply {
             setLightStatusBar()
@@ -67,14 +74,11 @@ class LetterSoundListActivity : AppCompatActivity() {
 
                 Log.i(TAG, "letterSoundGson.getId(): '" + letterSoundGson.id + "'")
 
-                val baseApplication = application as BaseApplication
-                val tts = baseApplication.tts
-                tts?.speak(
-                    letters,
-                    TextToSpeech.QUEUE_FLUSH,
-                    null,
-                    "letter_sound_" + letterSoundGson.id
-                )
+                    ttsViewModel.speak(
+                        letters,
+                        QueueMode.FLUSH,
+                        "letter_sound_" + letterSoundGson.id
+                    )
 
                 // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                 LearningEventUtil.reportLetterSoundLearningEvent(

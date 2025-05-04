@@ -3,6 +3,7 @@ elimuContentProvider = "1.3.6"
 material = "1.12.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
+hilt = "2.55"
 
 constraintLayout = "2.2.1"
 androidXJunit = "1.2.1"
@@ -17,9 +18,12 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

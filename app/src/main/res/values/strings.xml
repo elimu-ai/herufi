@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Letters</string>
+    <string name="text_letter_sound" translatable="false">/%1$s/\n⬇\n\"%2$s\"</string>
 </resources>

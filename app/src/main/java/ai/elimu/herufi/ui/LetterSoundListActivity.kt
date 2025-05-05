@@ -14,7 +14,6 @@ import ai.elimu.model.v2.gson.content.SoundGson
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import java.util.stream.Collectors
 
@@ -62,28 +61,26 @@ class LetterSoundListActivity : AppCompatActivity() {
             letterSoundViewBinding.letterSoundViewTextView.text = "/$sounds/\n⬇\n\"$letters\""
 
             // Play sound when pressed
-            letterSoundViewBinding.root.setOnClickListener(object : View.OnClickListener {
-                override fun onClick(v: View) {
-                    Log.i(TAG, "letterView onClick")
+            letterSoundViewBinding.root.setOnClickListener {
+                Log.i(TAG, "letterView onClick")
 
-                    Log.i(TAG, "letterSoundGson.getId(): '" + letterSoundGson.id + "'")
+                Log.i(TAG, "letterSoundGson.getId(): '" + letterSoundGson.id + "'")
 
-                    val baseApplication = application as BaseApplication
-                    val tts = baseApplication.tts
-                    tts?.speak(
-                        letters,
-                        TextToSpeech.QUEUE_FLUSH,
-                        null,
-                        "letter_sound_" + letterSoundGson.id
-                    )
+                val baseApplication = application as BaseApplication
+                val tts = baseApplication.tts
+                tts?.speak(
+                    letters,
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    "letter_sound_" + letterSoundGson.id
+                )
 
-                    // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                    LearningEventUtil.reportLetterSoundLearningEvent(
-                        letterSoundGson,
-                        applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
-                    )
-                }
-            })
+                // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                LearningEventUtil.reportLetterSoundLearningEvent(
+                    letterSoundGson,
+                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                )
+            }
 
             binding.letterSoundListFlexboxLayout.addView(letterSoundViewBinding.root)
         }

@@ -58,7 +58,8 @@ class LetterSoundListActivity : AppCompatActivity() {
                 letterSoundGson.letters.stream().map { obj: LetterGson -> obj.text }.collect(
                     Collectors.joining()
                 )
-            letterSoundViewBinding.letterSoundViewTextView.text = "/$sounds/\n⬇\n\"$letters\""
+            letterSoundViewBinding.letterSoundViewTextView.text =
+                getString(R.string.text_letter_sound, sounds, letters)
 
             // Play sound when pressed
             letterSoundViewBinding.root.setOnClickListener {

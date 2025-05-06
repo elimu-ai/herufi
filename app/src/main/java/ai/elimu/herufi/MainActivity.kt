@@ -1,5 +1,6 @@
 package ai.elimu.herufi
 
+import ai.elimu.herufi.databinding.ActivityMainBinding
 import ai.elimu.herufi.ui.LetterSoundListActivity
 import android.content.Intent
 import android.os.Bundle
@@ -7,11 +8,15 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(javaClass.name, "onCreate")
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Verify that the content-provider APK has been installed
         // TODO

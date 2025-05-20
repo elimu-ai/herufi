@@ -2,7 +2,8 @@
 
 Android application for learning letter identification
 
-<img src=640 src="https://user-images.githubusercontent.com/15718174/86510222-7cc90080-be20-11ea-8338-93662fa7a2c4.png" />
+<img width="792" alt="Screenshot 2025-05-20 at 12 33 25" src="https://github.com/user-attachments/assets/46cec28b-e557-46f0-bd1f-69f7a2e5d5dd" />
+
 
 ## Installation
 

@@ -82,8 +82,9 @@ class LetterSoundListActivity : AppCompatActivity() {
 
                 // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                 LearningEventUtil.reportLetterSoundLearningEvent(
-                    letterSoundGson,
-                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                    letterSoundGson = letterSoundGson,
+                    context = applicationContext,
+                    analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                 )
             }
 

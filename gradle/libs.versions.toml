@@ -3,7 +3,7 @@ elimuContentProvider = "1.4.32"
 material = "1.12.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
-hilt = "2.56.2"
+hilt = "2.57"
 
 constraintLayout = "2.2.1"
 androidXJunit = "1.2.1"

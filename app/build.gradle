@@ -11,12 +11,11 @@ plugins {
 
 android {
     namespace 'ai.elimu.herufi'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
-        applicationId "ai.elimu.herufi"
-        minSdkVersion 26
-        targetSdkVersion 35
+        minSdkVersion 29
+        targetSdkVersion 36
         versionCode 1001075
         versionName "1.1.75-SNAPSHOT"
 

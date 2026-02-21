@@ -2,6 +2,7 @@ package ai.elimu.herufi
 
 import ai.elimu.herufi.databinding.ActivityMainBinding
 import ai.elimu.herufi.ui.LetterSoundListActivity
+import ai.elimu.herufi.ui.SoundToLetterAssessmentActivity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -26,7 +27,8 @@ class MainActivity : AppCompatActivity() {
         Log.i(javaClass.name, "onStart")
         super.onStart()
 
-        val intent = Intent(applicationContext, LetterSoundListActivity::class.java)
+//        val intent = Intent(applicationContext, LetterSoundListActivity::class.java)
+        val intent = Intent(applicationContext, SoundToLetterAssessmentActivity::class.java)
         startActivity(intent)
         finish()
     }

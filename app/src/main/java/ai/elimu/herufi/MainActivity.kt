@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(javaClass.name, "onCreate")
+        Log.i(javaClass.simpleName, "onCreate")
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        Log.i(javaClass.name, "onStart")
+        Log.i(javaClass.simpleName, "onStart")
         super.onStart()
 
 //        val intent = Intent(applicationContext, LetterSoundListActivity::class.java)

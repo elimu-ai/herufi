@@ -18,13 +18,15 @@ android {
         targetSdkVersion 36
         versionCode 1001085
         versionName "1.1.85-SNAPSHOT"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
     }
 
     buildTypes {
@@ -41,9 +43,6 @@ android {
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider"')
             buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics"')
         }
-    }
-    kotlinOptions {
-        jvmTarget = '17'
     }
 
     buildFeatures {

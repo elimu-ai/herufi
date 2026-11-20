@@ -29,6 +29,9 @@ data class LetterSoundQuestion(
     val options: List<LetterSoundOption>
 ) {
     fun isCorrect(option: LetterSoundOption) = option.id == correctOption.id
+
+    /** The mastery score reported to Analytics: `1.0` for the correct option, `0.0` otherwise. */
+    fun masteryScoreFor(option: LetterSoundOption): Float = if (isCorrect(option)) 1f else 0f
 }
 
 object LetterSoundQuestionFactory {

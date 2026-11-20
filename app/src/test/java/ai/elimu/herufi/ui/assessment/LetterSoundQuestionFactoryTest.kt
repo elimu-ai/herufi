@@ -107,6 +107,17 @@ class LetterSoundQuestionFactoryTest {
     }
 
     @Test
+    fun masteryScoreIsOneForCorrectAndZeroForIncorrect() {
+        val question = LetterSoundQuestionFactory.create(
+            listOf(candidate("1", "a", "æ", 99), candidate("2", "s", "s", 50))
+        )!!
+
+        assertEquals(1f, question.masteryScoreFor(question.correctOption), 0f)
+        val incorrect = question.options.first { !question.isCorrect(it) }
+        assertEquals(0f, question.masteryScoreFor(incorrect), 0f)
+    }
+
+    @Test
     fun onlyTheCorrectOptionIsCorrect() {
         val question = LetterSoundQuestionFactory.create(
             listOf(candidate("1", "a", "æ", 99), candidate("2", "s", "s", 50))

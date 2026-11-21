@@ -27,5 +27,7 @@
         </activity>
 
         <activity android:name=".ui.LetterSoundListActivity" />
+
+        <activity android:name=".ui.assessment.LetterSoundAssessmentActivity" />
     </application>
 </manifest>

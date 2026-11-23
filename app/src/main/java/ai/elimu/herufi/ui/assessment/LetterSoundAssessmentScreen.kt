@@ -1,35 +1,63 @@
 package ai.elimu.herufi.ui.assessment
 
 import ai.elimu.herufi.R
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private val CorrectColor = Color(0xFF388E3C) // green_darken_2
+private val Teal = Color(0xFF429488)
 private val IncorrectColor = Color(0xFFC62828)
+
+/** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
+private val InactiveTileColor = Color(0xFFD6D7D7)
+private val InactiveLetterColor = Color(0xFFA6A6A6)
+
+/** Tiles waiting for an answer: same grey, but with a letter that is easy to read. */
+private val UnansweredLetterColor = Color(0xFF5F6368)
+
+/** Flat teal-on-off-white look used by the assessment screen. */
+internal val AssessmentColorScheme = lightColorScheme(
+    primary = Teal,
+    onPrimary = Color.White,
+    background = Color(0xFFFAFAFA),
+    surface = Color(0xFFFAFAFA)
+)
 
 @Composable
 fun LetterSoundAssessmentScreen(
@@ -87,45 +115,29 @@ private fun QuestionContent(
     onOptionSelected: (LetterSoundOption) -> Unit,
     onFinish: () -> Unit
 ) {
-    val question = state.question
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .safeDrawingPadding()
             .padding(24.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = stringResource(R.string.assessment_prompt),
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center
-        )
+        // The sound is played by the learner pressing the ear. Nothing else is written on the
+        // screen, so the learner has to rely on what they hear.
+        PlaySoundButton(onClick = { onPlaySound(state.question) })
 
-        // The sound, shown as IPA, with a button for hearing it
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = stringResource(R.string.assessment_sound_ipa, question.soundIpa),
-                fontSize = 72.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            Button(onClick = { onPlaySound(question) }) {
-                Text(
-                    text = stringResource(R.string.assessment_play_sound),
-                    fontSize = 24.sp
-                )
-            }
-        }
+        Spacer(Modifier.height(48.dp))
 
-        // The two options: one correct, one incorrect
+        // The two options: one correct, one incorrect. Flat square tiles, almost touching.
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier
+                .widthIn(max = 480.dp)
+                .fillMaxWidth(0.85f),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            question.options.forEach { option ->
-                OptionButton(
+            state.question.options.forEach { option ->
+                OptionTile(
                     option = option,
                     state = state,
                     onClick = { onOptionSelected(option) },
@@ -134,19 +146,11 @@ private fun QuestionContent(
             }
         }
 
-        // Feedback, shown once the learner has answered
-        if (state.isAnswered) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                val correct = state.isCorrect == true
-                Text(
-                    text = stringResource(
-                        if (correct) R.string.assessment_correct else R.string.assessment_incorrect
-                    ),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = if (correct) CorrectColor else IncorrectColor,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(32.dp))
+
+        // Reserve the space so that the tiles don't move when the button appears.
+        Box(modifier = Modifier.height(48.dp), contentAlignment = Alignment.Center) {
+            if (state.isAnswered) {
                 Button(onClick = onFinish) {
                     Text(stringResource(R.string.assessment_finish))
                 }
@@ -156,7 +160,28 @@ private fun QuestionContent(
 }
 
 @Composable
-private fun OptionButton(
+private fun PlaySoundButton(onClick: () -> Unit) {
+    val description = stringResource(R.string.assessment_play_sound)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(72.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primary)
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics { contentDescription = description }
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_hearing),
+            contentDescription = null, // described by the parent
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(36.dp)
+        )
+    }
+}
+
+@Composable
+private fun OptionTile(
     option: LetterSoundOption,
     state: LetterSoundAssessmentUiState.Question,
     onClick: () -> Unit,
@@ -165,37 +190,53 @@ private fun OptionButton(
     val isSelected = state.selectedOption?.id == option.id
     val isCorrectOption = state.question.isCorrect(option)
 
-    // After answering: reveal the correct option in green, and mark a wrong pick in red.
-    // The ✓/✗ mark means colour is not the only signal.
-    val (container, mark) = when {
-        !state.isAnswered -> MaterialTheme.colorScheme.primary to ""
-        isCorrectOption -> CorrectColor to " ✓"
-        isSelected -> IncorrectColor to " ✗"
-        else -> MaterialTheme.colorScheme.surfaceVariant to ""
-    }
-    val content = when {
-        !state.isAnswered -> MaterialTheme.colorScheme.onPrimary
-        isCorrectOption || isSelected -> Color.White
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    // Before answering: both tiles look the same, so nothing gives the answer away.
+    // After answering: the correct tile is revealed in teal, a wrong pick turns red, and the
+    // remaining tile fades to pale grey. The state is also exposed to screen readers, so the
+    // colour is not the only signal.
+    val container: Color
+    val letterColor: Color
+    val result: Int?
+    when {
+        !state.isAnswered -> {
+            container = InactiveTileColor
+            letterColor = UnansweredLetterColor
+            result = null
+        }
 
-    Button(
-        onClick = onClick,
-        enabled = !state.isAnswered,
-        shape = RoundedCornerShape(24.dp),
-        // Keep answered colours vivid instead of the default greyed-out disabled look
-        colors = ButtonDefaults.buttonColors(
-            containerColor = container,
-            contentColor = content,
-            disabledContainerColor = container,
-            disabledContentColor = content
-        ),
-        modifier = modifier.height(160.dp)
+        isCorrectOption -> {
+            container = MaterialTheme.colorScheme.primary
+            letterColor = MaterialTheme.colorScheme.onPrimary
+            result = R.string.assessment_correct
+        }
+
+        isSelected -> {
+            container = IncorrectColor
+            letterColor = Color.White
+            result = R.string.assessment_incorrect
+        }
+
+        else -> {
+            container = InactiveTileColor
+            letterColor = InactiveLetterColor
+            result = null
+        }
+    }
+    val resultDescription = result?.let { stringResource(it) }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .aspectRatio(1f)
+            .background(container)
+            .clickable(enabled = !state.isAnswered, role = Role.Button, onClick = onClick)
+            .semantics { resultDescription?.let { stateDescription = it } }
     ) {
         Text(
-            text = option.letters + mark,
-            fontSize = 64.sp,
-            fontWeight = FontWeight.Bold,
+            text = option.letters,
+            color = letterColor,
+            fontSize = 72.sp,
+            fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center
         )
     }
@@ -205,11 +246,29 @@ private fun OptionButton(
 @Composable
 private fun QuestionPreview() {
     val correct = LetterSoundOption("1", "a")
-    val wrong = LetterSoundOption("2", "m")
-    MaterialTheme {
+    val wrong = LetterSoundOption("2", "u")
+    MaterialTheme(colorScheme = AssessmentColorScheme) {
         LetterSoundAssessmentScreen(
             uiState = LetterSoundAssessmentUiState.Question(
-                LetterSoundQuestion("æ", correct, listOf(wrong, correct))
+                LetterSoundQuestion("æ", correct, listOf(correct, wrong))
+            ),
+            onPlaySound = {},
+            onOptionSelected = {},
+            onFinish = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 400, heightDp = 700)
+@Composable
+private fun AnsweredCorrectPreview() {
+    val correct = LetterSoundOption("1", "a")
+    val wrong = LetterSoundOption("2", "u")
+    MaterialTheme(colorScheme = AssessmentColorScheme) {
+        LetterSoundAssessmentScreen(
+            uiState = LetterSoundAssessmentUiState.Question(
+                question = LetterSoundQuestion("æ", correct, listOf(correct, wrong)),
+                selectedOption = correct
             ),
             onPlaySound = {},
             onOptionSelected = {},
@@ -222,11 +281,11 @@ private fun QuestionPreview() {
 @Composable
 private fun AnsweredIncorrectPreview() {
     val correct = LetterSoundOption("1", "a")
-    val wrong = LetterSoundOption("2", "m")
-    MaterialTheme {
+    val wrong = LetterSoundOption("2", "u")
+    MaterialTheme(colorScheme = AssessmentColorScheme) {
         LetterSoundAssessmentScreen(
             uiState = LetterSoundAssessmentUiState.Question(
-                question = LetterSoundQuestion("æ", correct, listOf(wrong, correct)),
+                question = LetterSoundQuestion("æ", correct, listOf(correct, wrong)),
                 selectedOption = wrong
             ),
             onPlaySound = {},

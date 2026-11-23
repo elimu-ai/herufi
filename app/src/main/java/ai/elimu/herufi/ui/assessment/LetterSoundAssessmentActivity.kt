@@ -10,10 +10,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,7 +41,7 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
         setContent {
             val uiState by viewModel.uiState.collectAsState()
 
-            MaterialTheme(colorScheme = herufiColorScheme) {
+            MaterialTheme(colorScheme = AssessmentColorScheme) {
                 LetterSoundAssessmentScreen(
                     uiState = uiState,
                     onPlaySound = { question ->
@@ -77,12 +75,3 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
         const val EXTRA_CORRECT = "ai.elimu.herufi.extra.CORRECT"
     }
 }
-
-// Matches the app's green palette in res/values/colors.xml
-private val herufiColorScheme = lightColorScheme(
-    primary = Color(0xFF4CAF50), // green
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFFB9F6CA), // green_accent_1
-    background = Color(0xFFF1F8E9),
-    surface = Color(0xFFF1F8E9)
-)

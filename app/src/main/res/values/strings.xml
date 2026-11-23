@@ -3,11 +3,10 @@
     <string name="text_letter_sound" translatable="false">/%1$s/\n⬇\n\"%2$s\"</string>
 
     <!-- Letter-sound assessment -->
-    <string name="assessment_prompt">Which letter makes this sound?</string>
-    <string name="assessment_sound_ipa" translatable="false">/%1$s/</string>
-    <string name="assessment_play_sound" translatable="false">🔊</string>
-    <string name="assessment_correct">Correct!</string>
-    <string name="assessment_incorrect">Not quite</string>
+    <!-- The screen is purely visual, so these are used as accessibility descriptions. -->
+    <string name="assessment_play_sound">Which letter makes this sound? Press to hear the sound.</string>
+    <string name="assessment_correct">Correct</string>
+    <string name="assessment_incorrect">Incorrect</string>
     <string name="assessment_finish">Finish</string>
     <string name="assessment_unavailable">Letters could not be loaded. Please make sure the content provider app is installed.</string>
 </resources>

@@ -32,6 +32,7 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
     private val viewModel: LetterSoundAssessmentViewModel by viewModels()
     private lateinit var ttsViewModel: TextToSpeechViewModel
     private lateinit var soundEffects: AssessmentSoundEffects
+    private lateinit var vibrator: AssessmentVibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -39,6 +40,7 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
 
         ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]
         soundEffects = AssessmentSoundEffects(this)
+        vibrator = AssessmentVibrator(this)
 
         setContent {
             val uiState by viewModel.uiState.collectAsState()
@@ -69,11 +71,13 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
 
     private fun onOptionSelected(option: LetterSoundOption) {
         val state = viewModel.uiState.value
-        // Only the first answer counts (and is reported), so only that one gets a sound
+        // Only the first answer counts (and is reported), so only that one gets feedback
         if (state !is LetterSoundAssessmentUiState.Question || state.isAnswered) return
 
         viewModel.onOptionSelected(option)
-        soundEffects.play(correct = state.question.isCorrect(option))
+        val correct = state.question.isCorrect(option)
+        soundEffects.play(correct)
+        if (!correct) vibrator.vibrateIncorrect()
     }
 
     private fun finishWithResult() {

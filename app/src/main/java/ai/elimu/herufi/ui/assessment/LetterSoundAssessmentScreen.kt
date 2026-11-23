@@ -68,14 +68,12 @@ import kotlinx.coroutines.launch
 
 private val Teal = Color(0xFF429488)
 
-/**
- * Blue for the correct answer and orange for the incorrect one. Both are fairly light, so they
- * get dark letters (white would only have a 2.2:1 and 2.7:1 contrast).
- */
-private val CorrectColor = Color(0xFF64B5F6)
-private val CorrectLetterColor = Color(0xFF0D2F52)
-private val IncorrectColor = Color(0xFFF57C00)
-private val IncorrectLetterColor = Color(0xFF3B1A00)
+/** The tile the learner picked turns dark blue (correct) or dark orange (incorrect). */
+private val SelectedCorrectColor = Color(0xFF1565C0)
+private val SelectedIncorrectColor = Color(0xFFE65100)
+
+/** The play-sound button is purple, so it does not compete with the answer colours. */
+private val PlayButtonColor = Color(0xFFC6B5E3)
 
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)
@@ -199,9 +197,8 @@ private val RaisedEdgeHeight = 6.dp
 
 /**
  * A button that looks raised: its face sits on a solid, darker edge of the same shape.
- * While pressed, the face drops onto the edge, so the button looks flat.
- *
- * @param flat Keep the button pressed down even when it is not being touched.
+ * While pressed, the face drops onto the edge, so the button looks flat. When released, it
+ * animates back up.
  */
 @Composable
 private fun RaisedSurface(
@@ -210,15 +207,15 @@ private fun RaisedSurface(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    flat: Boolean = false,
     edgeHeight: Dp = RaisedEdgeHeight,
     content: @Composable BoxScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val drop by animateDpAsState(
-        targetValue = if (flat || isPressed) edgeHeight else 0.dp,
-        animationSpec = tween(durationMillis = 60),
+        targetValue = if (isPressed) edgeHeight else 0.dp,
+        // Down quickly, back up a little slower so that the release can be seen
+        animationSpec = tween(durationMillis = if (isPressed) 60 else 140),
         label = "raised-surface-drop"
     )
 
@@ -278,7 +275,7 @@ private const val PULSE_COUNT = 2
 @Composable
 private fun PlaySoundButton(onClick: () -> Unit) {
     val description = stringResource(R.string.assessment_play_sound)
-    val glowColor = MaterialTheme.colorScheme.primary
+    val glowColor = PlayButtonColor
 
     // A soft glow pulses outwards from the button to show that audio is playing. The
     // text-to-speech engine is not observed, so the glow runs for a fixed time (about as long
@@ -297,7 +294,7 @@ private fun PlaySoundButton(onClick: () -> Unit) {
     }
 
     RaisedSurface(
-        faceColor = MaterialTheme.colorScheme.primary,
+        faceColor = PlayButtonColor,
         shape = CircleShape,
         onClick = {
             pressCount++
@@ -334,17 +331,21 @@ private fun PlaySoundButton(onClick: () -> Unit) {
     }
 }
 
-/**
- * A jump: the tile stretches and flies up, falls back and lands with a squash (wider and
- * shorter), rebounds a little, and settles. Started by [play].
- */
-private class JumpAnimation {
+/** Animations of an option tile, played when it is picked. */
+private class TileAnimation {
     /** How far the tile is lifted, in dp. */
     val lift = Animatable(0f)
     val scaleX = Animatable(1f)
     val scaleY = Animatable(1f)
 
-    suspend fun play() = coroutineScope {
+    /** How far the tile is shifted to the right, in dp. */
+    val shift = Animatable(0f)
+
+    /**
+     * A jump: the tile stretches and flies up, falls back and lands with a squash (wider and
+     * shorter), rebounds a little, and settles.
+     */
+    suspend fun jump() = coroutineScope {
         launch {
             lift.animateTo(JUMP_HEIGHT_DP, tween(160, easing = LinearOutSlowInEasing)) // up
             lift.animateTo(0f, tween(150, easing = FastOutLinearInEasing)) // down
@@ -364,9 +365,20 @@ private class JumpAnimation {
             scaleX.animateTo(1f, tween(110))
         }
     }
+
+    /** A shake: the tile swings from side to side, with a smaller swing each time. */
+    suspend fun shake() {
+        for (strength in SHAKE_STRENGTHS) {
+            shift.animateTo(strength * SHAKE_DISTANCE_DP, tween(SHAKE_STEP_MS))
+        }
+        shift.animateTo(0f, tween(SHAKE_STEP_MS))
+    }
 }
 
 private const val JUMP_HEIGHT_DP = 16f
+private const val SHAKE_DISTANCE_DP = 10f
+private const val SHAKE_STEP_MS = 45
+private val SHAKE_STRENGTHS = listOf(-1f, 1f, -0.8f, 0.8f, -0.5f, 0.5f, -0.25f, 0.25f)
 
 @Composable
 private fun OptionTile(
@@ -379,9 +391,11 @@ private fun OptionTile(
     val isCorrectOption = state.question.isCorrect(option)
 
     // Before answering: both tiles look the same, so nothing gives the answer away.
-    // After answering: the correct tile is revealed in blue, a wrong pick turns orange, and the
-    // remaining tile fades to pale grey. The state is also exposed to screen readers, so the
-    // colour is not the only signal.
+    // After answering: the tile that was picked is dark blue (correct) or dark orange (incorrect),
+    // with white letters. The other tile does not change colour if it is the correct one (the
+    // right answer is not revealed after a wrong pick), and otherwise fades to pale grey. The
+    // result of the picked tile is also exposed to screen readers, so the colour is not the only
+    // signal.
     val container: Color
     val letterColor: Color
     val result: Int?
@@ -392,15 +406,22 @@ private fun OptionTile(
             result = null
         }
 
-        isCorrectOption -> {
-            container = CorrectColor
-            letterColor = CorrectLetterColor
+        isCorrectOption && isSelected -> {
+            container = SelectedCorrectColor
+            letterColor = Color.White
             result = R.string.assessment_correct
         }
 
+        isCorrectOption -> {
+            // Not picked: stays exactly as it was before answering
+            container = InactiveTileColor
+            letterColor = UnansweredLetterColor
+            result = null
+        }
+
         isSelected -> {
-            container = IncorrectColor
-            letterColor = IncorrectLetterColor
+            container = SelectedIncorrectColor
+            letterColor = Color.White
             result = R.string.assessment_incorrect
         }
 
@@ -412,11 +433,15 @@ private fun OptionTile(
     }
     val resultDescription = result?.let { stringResource(it) }
 
-    // The tile jumps for joy when the learner picks it and it is the correct one
-    val jump = remember { JumpAnimation() }
+    // The tile jumps for joy when the correct one is picked, and shakes when a wrong one is
+    val animation = remember { TileAnimation() }
     val jumps = isCorrectOption && state.isCorrect == true
+    val shakes = isSelected && !isCorrectOption
     LaunchedEffect(jumps) {
-        if (jumps) jump.play()
+        if (jumps) animation.jump()
+    }
+    LaunchedEffect(shakes) {
+        if (shakes) animation.shake()
     }
 
     RaisedSurface(
@@ -424,14 +449,13 @@ private fun OptionTile(
         shape = TileShape,
         onClick = onClick,
         enabled = !state.isAnswered,
-        // Once answered, every tile stays pressed down: nothing is left to press
-        flat = state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
             .graphicsLayer {
-                translationY = -jump.lift.value.dp.toPx()
-                scaleX = jump.scaleX.value
-                scaleY = jump.scaleY.value
+                translationX = animation.shift.value.dp.toPx()
+                translationY = -animation.lift.value.dp.toPx()
+                scaleX = animation.scaleX.value
+                scaleY = animation.scaleY.value
                 // Squash against the "ground": the bottom edge of the tile
                 transformOrigin = TransformOrigin(0.5f, 1f)
             }

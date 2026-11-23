@@ -63,9 +63,14 @@ import androidx.compose.ui.unit.sp
 
 private val Teal = Color(0xFF429488)
 
-/** Blue for the correct answer and orange for the incorrect one (both readable with white letters). */
-private val CorrectColor = Color(0xFF1E7FD8)
-private val IncorrectColor = Color(0xFFE8710A)
+/**
+ * Blue for the correct answer and orange for the incorrect one. Both are fairly light, so they
+ * get dark letters (white would only have a 2.2:1 and 2.7:1 contrast).
+ */
+private val CorrectColor = Color(0xFF64B5F6)
+private val CorrectLetterColor = Color(0xFF0D2F52)
+private val IncorrectColor = Color(0xFFF57C00)
+private val IncorrectLetterColor = Color(0xFF3B1A00)
 
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)
@@ -350,13 +355,13 @@ private fun OptionTile(
 
         isCorrectOption -> {
             container = CorrectColor
-            letterColor = Color.White
+            letterColor = CorrectLetterColor
             result = R.string.assessment_correct
         }
 
         isSelected -> {
             container = IncorrectColor
-            letterColor = Color.White
+            letterColor = IncorrectLetterColor
             result = R.string.assessment_incorrect
         }
 

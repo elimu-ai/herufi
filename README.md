@@ -1,24 +1,23 @@
 # Herufi 🔡
 
-Android application for learning letter identification
+Android application for learning sound-to-letter correspondences.
 
-<img width="792" alt="Screenshot 2025-05-20 at 12 33 25" src="https://github.com/user-attachments/assets/46cec28b-e557-46f0-bd1f-69f7a2e5d5dd" />
+Literacy skill: [`LETTER_IDENTIFICATION`](https://github.com/elimu-ai/wiki/blob/main/literacy-skills/LETTER_IDENTIFICATION.md)
 
+<img width="480" height="1077" alt="listen-and-select" src="https://github.com/user-attachments/assets/1e8e7cb7-f9cb-4e35-9673-af2de48237a1" />
 
 ## Installation
 
-> [!IMPORTANT]
-> Note: This app depends on the [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider) to be installed.
+> [!NOTE]
+> This app depends on two infrastructural elimu.ai apps to be installed:
+> * [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider)
+> * [elimu.ai Analytics](https://github.com/elimu-ai/analytics)
 
 ## Development 👩🏽‍💻
 
 ```
 ./gradlew clean build
 ```
-
-### Content Provider Utils 📦
-
-If you want to make changes to the elimu.ai Content Provider's utility library, see testing instructions at https://github.com/elimu-ai/content-provider/blob/main/README.md#utils-snapshot
 
 ### Gradle Upgrade
 

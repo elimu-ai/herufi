@@ -2,6 +2,7 @@ package ai.elimu.herufi.ui.assessment
 
 import ai.elimu.herufi.R
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateDpAsState
@@ -46,6 +47,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +63,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 private val Teal = Color(0xFF429488)
 
@@ -329,6 +334,40 @@ private fun PlaySoundButton(onClick: () -> Unit) {
     }
 }
 
+/**
+ * A jump: the tile stretches and flies up, falls back and lands with a squash (wider and
+ * shorter), rebounds a little, and settles. Started by [play].
+ */
+private class JumpAnimation {
+    /** How far the tile is lifted, in dp. */
+    val lift = Animatable(0f)
+    val scaleX = Animatable(1f)
+    val scaleY = Animatable(1f)
+
+    suspend fun play() = coroutineScope {
+        launch {
+            lift.animateTo(JUMP_HEIGHT_DP, tween(160, easing = LinearOutSlowInEasing)) // up
+            lift.animateTo(0f, tween(150, easing = FastOutLinearInEasing)) // down
+            lift.animateTo(JUMP_HEIGHT_DP / 3f, tween(110, easing = LinearOutSlowInEasing)) // rebound
+            lift.animateTo(0f, tween(110, easing = FastOutLinearInEasing))
+        }
+        launch {
+            scaleY.animateTo(1.06f, tween(160)) // stretched while flying up
+            scaleY.animateTo(0.86f, tween(150)) // squashed on landing
+            scaleY.animateTo(1.03f, tween(110))
+            scaleY.animateTo(1f, tween(110))
+        }
+        launch {
+            scaleX.animateTo(0.97f, tween(160))
+            scaleX.animateTo(1.08f, tween(150))
+            scaleX.animateTo(0.99f, tween(110))
+            scaleX.animateTo(1f, tween(110))
+        }
+    }
+}
+
+private const val JUMP_HEIGHT_DP = 16f
+
 @Composable
 private fun OptionTile(
     option: LetterSoundOption,
@@ -373,6 +412,13 @@ private fun OptionTile(
     }
     val resultDescription = result?.let { stringResource(it) }
 
+    // The tile jumps for joy when the learner picks it and it is the correct one
+    val jump = remember { JumpAnimation() }
+    val jumps = isCorrectOption && state.isCorrect == true
+    LaunchedEffect(jumps) {
+        if (jumps) jump.play()
+    }
+
     RaisedSurface(
         faceColor = container,
         shape = TileShape,
@@ -382,6 +428,13 @@ private fun OptionTile(
         flat = state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
+            .graphicsLayer {
+                translationY = -jump.lift.value.dp.toPx()
+                scaleX = jump.scaleX.value
+                scaleY = jump.scaleY.value
+                // Squash against the "ground": the bottom edge of the tile
+                transformOrigin = TransformOrigin(0.5f, 1f)
+            }
             .semantics { resultDescription?.let { stateDescription = it } }
     ) {
         Text(

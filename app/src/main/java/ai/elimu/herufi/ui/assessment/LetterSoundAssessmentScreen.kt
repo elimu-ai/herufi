@@ -4,10 +4,14 @@ import ai.elimu.herufi.R
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +19,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +45,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -47,8 +54,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -91,9 +101,10 @@ fun LetterSoundAssessmentScreen(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(32.dp)
                 )
-                Button(onClick = onFinish) {
-                    Text(stringResource(R.string.assessment_finish))
-                }
+                RaisedButton(
+                    text = stringResource(R.string.assessment_finish),
+                    onClick = onFinish
+                )
             }
 
             is LetterSoundAssessmentUiState.Question -> QuestionContent(
@@ -140,12 +151,12 @@ private fun QuestionContent(
 
         Spacer(Modifier.height(48.dp))
 
-        // The two options: one correct, one incorrect. Flat square tiles, almost touching.
+        // The two options: one correct, one incorrect. Square tiles, side by side.
         Row(
             modifier = Modifier
                 .widthIn(max = 480.dp)
                 .fillMaxWidth(0.85f),
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             state.question.options.forEach { option ->
                 OptionTile(
@@ -160,13 +171,91 @@ private fun QuestionContent(
         Spacer(Modifier.height(32.dp))
 
         // Reserve the space so that the tiles don't move when the button appears.
-        Box(modifier = Modifier.height(48.dp), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.height(56.dp), contentAlignment = Alignment.Center) {
             if (state.isAnswered) {
-                Button(onClick = onFinish) {
-                    Text(stringResource(R.string.assessment_finish))
-                }
+                RaisedButton(
+                    text = stringResource(R.string.assessment_finish),
+                    onClick = onFinish
+                )
             }
         }
+    }
+}
+
+private val TileShape = RoundedCornerShape(12.dp)
+private val RaisedEdgeHeight = 6.dp
+
+/**
+ * A button that looks raised: its face sits on a solid, darker edge of the same shape.
+ * While pressed, the face drops onto the edge, so the button looks flat.
+ *
+ * @param flat Keep the button pressed down even when it is not being touched.
+ */
+@Composable
+private fun RaisedSurface(
+    faceColor: Color,
+    shape: Shape,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    flat: Boolean = false,
+    edgeHeight: Dp = RaisedEdgeHeight,
+    content: @Composable BoxScope.() -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val drop by animateDpAsState(
+        targetValue = if (flat || isPressed) edgeHeight else 0.dp,
+        animationSpec = tween(durationMillis = 60),
+        label = "raised-surface-drop"
+    )
+
+    Box(
+        // The caller's size applies to the face; the edge sticks out below it
+        propagateMinConstraints = true,
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null, // the face dropping is the feedback
+            enabled = enabled,
+            role = Role.Button,
+            onClick = onClick
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .offset(y = edgeHeight)
+                .background(lerp(faceColor, Color.Black, 0.25f), shape)
+        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .offset { IntOffset(0, drop.roundToPx()) }
+                .clip(shape)
+                .background(faceColor),
+            content = content
+        )
+    }
+}
+
+@Composable
+private fun RaisedButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    RaisedSurface(
+        faceColor = MaterialTheme.colorScheme.primary,
+        shape = TileShape,
+        onClick = onClick,
+        edgeHeight = 4.dp,
+        modifier = modifier
+            .height(48.dp)
+            .widthIn(min = 160.dp)
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
     }
 }
 
@@ -195,11 +284,16 @@ private fun PlaySoundButton(onClick: () -> Unit) {
         isPlaying = false
     }
 
-    Box(
-        contentAlignment = Alignment.Center,
+    RaisedSurface(
+        faceColor = MaterialTheme.colorScheme.primary,
+        shape = CircleShape,
+        onClick = {
+            pressCount++
+            onClick()
+        },
         modifier = Modifier
             .size(72.dp)
-            // Drawn before `clip`, so the glow is not cut off at the edge of the circle
+            // Drawn behind everything, so the glow is not cut off at the edge of the circle
             .drawBehind {
                 if (!isPlaying) return@drawBehind
                 // Two rings, half a cycle apart, so there is always one in view
@@ -216,12 +310,6 @@ private fun PlaySoundButton(onClick: () -> Unit) {
                         center = center
                     )
                 }
-            }
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primary)
-            .clickable(role = Role.Button) {
-                pressCount++
-                onClick()
             }
             .semantics { contentDescription = description }
     ) {
@@ -278,12 +366,15 @@ private fun OptionTile(
     }
     val resultDescription = result?.let { stringResource(it) }
 
-    Box(
-        contentAlignment = Alignment.Center,
+    RaisedSurface(
+        faceColor = container,
+        shape = TileShape,
+        onClick = onClick,
+        enabled = !state.isAnswered,
+        // Once answered, every tile stays pressed down: nothing is left to press
+        flat = state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
-            .background(container)
-            .clickable(enabled = !state.isAnswered, role = Role.Button, onClick = onClick)
             .semantics { resultDescription?.let { stateDescription = it } }
     ) {
         Text(

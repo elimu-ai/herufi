@@ -53,7 +53,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +62,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val Teal = Color(0xFF429488)
-private val IncorrectColor = Color(0xFFC62828)
+
+/** Blue for the correct answer and orange for the incorrect one (both readable with white letters). */
+private val CorrectColor = Color(0xFF1E7FD8)
+private val IncorrectColor = Color(0xFFE8710A)
 
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)
@@ -333,7 +335,7 @@ private fun OptionTile(
     val isCorrectOption = state.question.isCorrect(option)
 
     // Before answering: both tiles look the same, so nothing gives the answer away.
-    // After answering: the correct tile is revealed in teal, a wrong pick turns red, and the
+    // After answering: the correct tile is revealed in blue, a wrong pick turns orange, and the
     // remaining tile fades to pale grey. The state is also exposed to screen readers, so the
     // colour is not the only signal.
     val container: Color
@@ -347,8 +349,8 @@ private fun OptionTile(
         }
 
         isCorrectOption -> {
-            container = MaterialTheme.colorScheme.primary
-            letterColor = MaterialTheme.colorScheme.onPrimary
+            container = CorrectColor
+            letterColor = Color.White
             result = R.string.assessment_correct
         }
 
@@ -381,7 +383,6 @@ private fun OptionTile(
             text = option.letters,
             color = letterColor,
             fontSize = 72.sp,
-            fontStyle = FontStyle.Italic,
             textAlign = TextAlign.Center
         )
     }

@@ -31,12 +31,14 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
 
     private val viewModel: LetterSoundAssessmentViewModel by viewModels()
     private lateinit var ttsViewModel: TextToSpeechViewModel
+    private lateinit var soundEffects: AssessmentSoundEffects
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
         ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]
+        soundEffects = AssessmentSoundEffects(this)
 
         setContent {
             val uiState by viewModel.uiState.collectAsState()
@@ -53,11 +55,25 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
                             "letter_sound_" + question.correctOption.id
                         )
                     },
-                    onOptionSelected = viewModel::onOptionSelected,
+                    onOptionSelected = ::onOptionSelected,
                     onFinish = { finishWithResult() }
                 )
             }
         }
+    }
+
+    override fun onDestroy() {
+        soundEffects.release()
+        super.onDestroy()
+    }
+
+    private fun onOptionSelected(option: LetterSoundOption) {
+        val state = viewModel.uiState.value
+        // Only the first answer counts (and is reported), so only that one gets a sound
+        if (state !is LetterSoundAssessmentUiState.Question || state.isAnswered) return
+
+        viewModel.onOptionSelected(option)
+        soundEffects.play(correct = state.question.isCorrect(option))
     }
 
     private fun finishWithResult() {

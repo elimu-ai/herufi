@@ -1,6 +1,9 @@
 package ai.elimu.herufi.ui.assessment
 
 import ai.elimu.herufi.R
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +28,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -159,16 +170,59 @@ private fun QuestionContent(
     }
 }
 
+/** How long one glow pulse takes, and how many pulses are shown after each press. */
+private const val PULSE_DURATION_MS = 750
+private const val PULSE_COUNT = 2
+
 @Composable
 private fun PlaySoundButton(onClick: () -> Unit) {
     val description = stringResource(R.string.assessment_play_sound)
+    val glowColor = MaterialTheme.colorScheme.primary
+
+    // A soft glow pulses outwards from the button to show that audio is playing. The
+    // text-to-speech engine is not observed, so the glow runs for a fixed time (about as long
+    // as a letter-sound takes to say) after each press. Pressing again restarts it.
+    var pressCount by remember { mutableIntStateOf(0) }
+    var isPlaying by remember { mutableStateOf(false) }
+    val pulseProgress = remember { Animatable(0f) }
+    LaunchedEffect(pressCount) {
+        if (pressCount == 0) return@LaunchedEffect
+        isPlaying = true
+        repeat(PULSE_COUNT) {
+            pulseProgress.snapTo(0f)
+            pulseProgress.animateTo(1f, tween(PULSE_DURATION_MS, easing = LinearOutSlowInEasing))
+        }
+        isPlaying = false
+    }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(72.dp)
+            // Drawn before `clip`, so the glow is not cut off at the edge of the circle
+            .drawBehind {
+                if (!isPlaying) return@drawBehind
+                // Two rings, half a cycle apart, so there is always one in view
+                listOf(pulseProgress.value, (pulseProgress.value + 0.5f) % 1f).forEach { p ->
+                    val radius = size.minDimension / 2f * (1f + 0.9f * p)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            0.5f to glowColor.copy(alpha = 0.45f * (1f - p)),
+                            1f to glowColor.copy(alpha = 0f),
+                            center = center,
+                            radius = radius
+                        ),
+                        radius = radius,
+                        center = center
+                    )
+                }
+            }
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primary)
-            .clickable(role = Role.Button, onClick = onClick)
+            .clickable(role = Role.Button) {
+                pressCount++
+                onClick()
+            }
             .semantics { contentDescription = description }
     ) {
         Icon(

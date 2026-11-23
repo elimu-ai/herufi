@@ -72,8 +72,8 @@ private val Teal = Color(0xFF429488)
 private val SelectedCorrectColor = Color(0xFF1565C0)
 private val SelectedIncorrectColor = Color(0xFFE65100)
 
-/** The play-sound button is grey, so it does not compete with the answer colours. */
-private val PlayButtonColor = Color(0xFF757575)
+/** The play-sound button is purple, so it does not compete with the answer colours. */
+private val PlayButtonColor = Color(0xFFC6B5E3)
 
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)

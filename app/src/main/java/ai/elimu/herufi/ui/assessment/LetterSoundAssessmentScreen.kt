@@ -68,15 +68,9 @@ import kotlinx.coroutines.launch
 
 private val Teal = Color(0xFF429488)
 
-/**
- * The tile the learner picked turns dark blue (correct) or dark orange (incorrect), with white
- * letters. When a wrong tile is picked, the correct one is revealed in a lighter blue, which
- * needs dark letters (white would only have a 2.2:1 contrast).
- */
+/** The tile the learner picked turns dark blue (correct) or dark orange (incorrect). */
 private val SelectedCorrectColor = Color(0xFF1565C0)
 private val SelectedIncorrectColor = Color(0xFFE65100)
-private val RevealedCorrectColor = Color(0xFF64B5F6)
-private val RevealedCorrectLetterColor = Color(0xFF0D2F52)
 
 /** The play-sound button is grey, so it does not compete with the answer colours. */
 private val PlayButtonColor = Color(0xFF757575)
@@ -398,9 +392,10 @@ private fun OptionTile(
 
     // Before answering: both tiles look the same, so nothing gives the answer away.
     // After answering: the tile that was picked is dark blue (correct) or dark orange (incorrect),
-    // with white letters. If a wrong tile was picked, the correct one is revealed in a lighter
-    // blue, and the remaining tile fades to pale grey. The state is also exposed to screen
-    // readers, so the colour is not the only signal.
+    // with white letters. The other tile does not change colour if it is the correct one (the
+    // right answer is not revealed after a wrong pick), and otherwise fades to pale grey. The
+    // result of the picked tile is also exposed to screen readers, so the colour is not the only
+    // signal.
     val container: Color
     val letterColor: Color
     val result: Int?
@@ -418,9 +413,10 @@ private fun OptionTile(
         }
 
         isCorrectOption -> {
-            container = RevealedCorrectColor
-            letterColor = RevealedCorrectLetterColor
-            result = R.string.assessment_correct
+            // Not picked: stays exactly as it was before answering
+            container = InactiveTileColor
+            letterColor = UnansweredLetterColor
+            result = null
         }
 
         isSelected -> {

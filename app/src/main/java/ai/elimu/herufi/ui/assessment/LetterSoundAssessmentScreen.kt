@@ -46,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -392,8 +391,8 @@ private val StarParticles: List<StarParticle> = Random(7).let { random ->
     List(STAR_COUNT) { i ->
         StarParticle(
             angleRad = (i * 2 * PI / STAR_COUNT + (random.nextFloat() - 0.5f) * 0.4f).toFloat(),
-            distanceDp = 60f + random.nextFloat() * 50f,
-            sizeDp = 7f + random.nextFloat() * 7f,
+            distanceDp = 120f + random.nextFloat() * 100f,
+            sizeDp = 14f + random.nextFloat() * 14f,
             spinDegrees = (if (random.nextBoolean()) 1 else -1) * (120f + random.nextFloat() * 120f),
             color = StarColors[i % StarColors.size]
         )
@@ -422,7 +421,7 @@ private fun DrawScope.drawStarBurst(progress: Float) {
 
     StarParticles.forEach { star ->
         val distance = star.distanceDp.dp.toPx() * flown
-        val sink = 24.dp.toPx() * progress * progress // slowly drifts down, like confetti
+        val sink = 48.dp.toPx() * progress * progress // slowly drifts down, like confetti
         val x = center.x + cos(star.angleRad) * distance
         val y = center.y + sin(star.angleRad) * distance + sink
         val size = star.sizeDp.dp.toPx() * (1f - 0.4f * progress)
@@ -581,11 +580,9 @@ private fun OptionTile(
         enabled = enabled && !state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
-            // Drawn outside of (and over) the jumping tile, so that the stars are not squashed
-            .drawWithContent {
-                drawContent()
-                drawStarBurst(animation.burst.value)
-            }
+            // Drawn behind the tile (so they never cover the letter), and outside of the jumping
+            // layer, so that the stars are not squashed
+            .drawBehind { drawStarBurst(animation.burst.value) }
             .graphicsLayer {
                 translationX = animation.shift.value.dp.toPx()
                 translationY = -animation.lift.value.dp.toPx()

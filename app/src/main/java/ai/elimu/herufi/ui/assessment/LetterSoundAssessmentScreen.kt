@@ -1,6 +1,7 @@
 package ai.elimu.herufi.ui.assessment
 
 import ai.elimu.herufi.R
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -72,6 +73,10 @@ private val Teal = Color(0xFF429488)
 private val SelectedCorrectColor = Color(0xFF1565C0)
 private val SelectedIncorrectColor = Color(0xFFE65100)
 
+/** The whole screen turns light blue after a correct answer, and light orange after an incorrect one. */
+private val CorrectBackgroundColor = Color(0xFFBBDEFB)
+private val IncorrectBackgroundColor = Color(0xFFFFE0B2)
+
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)
 private val InactiveLetterColor = Color(0xFFA6A6A6)
@@ -95,7 +100,18 @@ fun LetterSoundAssessmentScreen(
     onFinish: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    val answerCorrect = (uiState as? LetterSoundAssessmentUiState.Question)?.isCorrect
+    val background by animateColorAsState(
+        targetValue = when (answerCorrect) {
+            true -> CorrectBackgroundColor
+            false -> IncorrectBackgroundColor
+            null -> MaterialTheme.colorScheme.background // not answered yet
+        },
+        animationSpec = tween(durationMillis = 300),
+        label = "background"
+    )
+
+    Surface(modifier = modifier.fillMaxSize(), color = background) {
         when (uiState) {
             LetterSoundAssessmentUiState.Loading -> Centered {
                 CircularProgressIndicator()

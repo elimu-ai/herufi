@@ -461,7 +461,7 @@ private fun OptionTile(
         Text(
             text = option.letters,
             color = letterColor,
-            fontSize = 72.sp,
+            fontSize = 108.sp,
             textAlign = TextAlign.Center
         )
     }

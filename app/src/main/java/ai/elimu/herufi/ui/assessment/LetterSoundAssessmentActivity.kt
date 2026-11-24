@@ -4,10 +4,13 @@ import ai.elimu.common.utils.data.model.tts.QueueMode
 import ai.elimu.common.utils.viewmodel.TextToSpeechViewModel
 import ai.elimu.common.utils.viewmodel.TextToSpeechViewModelImpl
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
@@ -36,6 +39,13 @@ class LetterSoundAssessmentActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
+        // Draw behind the status and navigation bars, so that the background colour that shows
+        // the result covers the entire screen. The backgrounds are always light, so the bars
+        // always get dark icons (also when the device is in dark mode).
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        )
         super.onCreate(savedInstanceState)
 
         ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]

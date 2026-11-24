@@ -40,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -168,9 +169,18 @@ private fun QuestionContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // The learner has to listen before answering: the options can't be pressed until the
+        // sound has been played at least once.
+        var soundPlayed by rememberSaveable(state.question.correctOption.id) {
+            mutableStateOf(false)
+        }
+
         // The sound is played by the learner pressing the ear. Nothing else is written on the
         // screen, so the learner has to rely on what they hear.
-        PlaySoundButton(onClick = { onPlaySound(state.question) })
+        PlaySoundButton(onClick = {
+            soundPlayed = true
+            onPlaySound(state.question)
+        })
 
         Spacer(Modifier.height(48.dp))
 
@@ -185,6 +195,7 @@ private fun QuestionContent(
                 OptionTile(
                     option = option,
                     state = state,
+                    enabled = soundPlayed,
                     onClick = { onOptionSelected(option) },
                     modifier = Modifier.weight(1f)
                 )
@@ -397,6 +408,8 @@ private val SHAKE_STRENGTHS = listOf(-1f, 1f, -0.8f, 0.8f, -0.5f, 0.5f, -0.25f, 
 private fun OptionTile(
     option: LetterSoundOption,
     state: LetterSoundAssessmentUiState.Question,
+    /** False until the sound has been played: the tile can't be pressed, and its letter is pale. */
+    enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -415,7 +428,7 @@ private fun OptionTile(
     when {
         !state.isAnswered -> {
             container = InactiveTileColor
-            letterColor = UnansweredLetterColor
+            letterColor = if (enabled) UnansweredLetterColor else InactiveLetterColor
             result = null
         }
 
@@ -461,7 +474,7 @@ private fun OptionTile(
         faceColor = container,
         shape = TileShape,
         onClick = onClick,
-        enabled = !state.isAnswered,
+        enabled = enabled && !state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
             .graphicsLayer {

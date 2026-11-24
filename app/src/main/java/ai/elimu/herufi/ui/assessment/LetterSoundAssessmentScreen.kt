@@ -72,9 +72,6 @@ private val Teal = Color(0xFF429488)
 private val SelectedCorrectColor = Color(0xFF1565C0)
 private val SelectedIncorrectColor = Color(0xFFE65100)
 
-/** The play-sound button is purple, so it does not compete with the answer colours. */
-private val PlayButtonColor = Color(0xFFC6B5E3)
-
 /** Tile that is not (or no longer) in play: pale grey, with a muted letter. */
 private val InactiveTileColor = Color(0xFFD6D7D7)
 private val InactiveLetterColor = Color(0xFFA6A6A6)
@@ -275,7 +272,7 @@ private const val PULSE_COUNT = 2
 @Composable
 private fun PlaySoundButton(onClick: () -> Unit) {
     val description = stringResource(R.string.assessment_play_sound)
-    val glowColor = PlayButtonColor
+    val glowColor = MaterialTheme.colorScheme.primary
 
     // A soft glow pulses outwards from the button to show that audio is playing. The
     // text-to-speech engine is not observed, so the glow runs for a fixed time (about as long
@@ -294,7 +291,7 @@ private fun PlaySoundButton(onClick: () -> Unit) {
     }
 
     RaisedSurface(
-        faceColor = PlayButtonColor,
+        faceColor = MaterialTheme.colorScheme.primary,
         shape = CircleShape,
         onClick = {
             pressCount++

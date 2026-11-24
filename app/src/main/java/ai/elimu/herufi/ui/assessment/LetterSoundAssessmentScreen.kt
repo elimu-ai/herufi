@@ -235,6 +235,8 @@ private val RaisedEdgeHeight = 6.dp
  * A button that looks raised: its face sits on a solid, darker edge of the same shape.
  * While pressed, the face drops onto the edge, so the button looks flat. When released, it
  * animates back up.
+ *
+ * @param flat Keep the button pressed down even when it is not being touched.
  */
 @Composable
 private fun RaisedSurface(
@@ -243,13 +245,14 @@ private fun RaisedSurface(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    flat: Boolean = false,
     edgeHeight: Dp = RaisedEdgeHeight,
     content: @Composable BoxScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val drop by animateDpAsState(
-        targetValue = if (isPressed) edgeHeight else 0.dp,
+        targetValue = if (flat || isPressed) edgeHeight else 0.dp,
         // Down quickly, back up a little slower so that the release can be seen
         animationSpec = tween(durationMillis = if (isPressed) 60 else 140),
         label = "raised-surface-drop"
@@ -578,6 +581,8 @@ private fun OptionTile(
         shape = TileShape,
         onClick = onClick,
         enabled = enabled && !state.isAnswered,
+        // The correct tile stays pressed down once it has been picked; the others spring back up
+        flat = isCorrectOption && isSelected,
         modifier = modifier
             .aspectRatio(1f)
             // Drawn behind the tile (so they never cover the letter), and outside of the jumping

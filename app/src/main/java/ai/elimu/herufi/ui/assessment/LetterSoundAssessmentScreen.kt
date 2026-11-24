@@ -46,10 +46,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
@@ -65,6 +74,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.random.Random
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -355,6 +368,82 @@ private fun PlaySoundButton(onClick: () -> Unit) {
     }
 }
 
+/** One star of the burst: where it flies, how big it is, how fast it spins, and its colour. */
+private class StarParticle(
+    val angleRad: Float,
+    val distanceDp: Float,
+    val sizeDp: Float,
+    val spinDegrees: Float,
+    val color: Color
+)
+
+/** Warm, soft colours that show up on both the light blue and the light orange background. */
+private val StarColors = listOf(
+    Color(0xFFFFC107),
+    Color(0xFFFFCA28),
+    Color(0xFFFFD54F),
+    Color(0xFFFFA726)
+)
+
+private const val STAR_COUNT = 12
+
+// A fixed seed: the burst looks the same every time (and in previews)
+private val StarParticles: List<StarParticle> = Random(7).let { random ->
+    List(STAR_COUNT) { i ->
+        StarParticle(
+            angleRad = (i * 2 * PI / STAR_COUNT + (random.nextFloat() - 0.5f) * 0.4f).toFloat(),
+            distanceDp = 60f + random.nextFloat() * 50f,
+            sizeDp = 7f + random.nextFloat() * 7f,
+            spinDegrees = (if (random.nextBoolean()) 1 else -1) * (120f + random.nextFloat() * 120f),
+            color = StarColors[i % StarColors.size]
+        )
+    }
+}
+
+/** A five-pointed star with a radius of 1, centred on (0, 0). */
+private val UnitStar = Path().apply {
+    for (i in 0 until 10) {
+        val radius = if (i % 2 == 0) 1f else 0.5f
+        val angle = -PI / 2 + i * PI / 5
+        val x = (radius * cos(angle)).toFloat()
+        val y = (radius * sin(angle)).toFloat()
+        if (i == 0) moveTo(x, y) else lineTo(x, y)
+    }
+    close()
+}
+
+/** Draws the stars flying out from the centre; [progress] goes from 0 (start) to 1 (gone). */
+private fun DrawScope.drawStarBurst(progress: Float) {
+    if (progress <= 0f || progress >= 1f) return
+
+    val flown = 1f - (1f - progress) * (1f - progress) * (1f - progress) // fast start, slow end
+    val fadeIn = (progress / 0.08f).coerceAtMost(1f)
+    val alpha = fadeIn * (1f - progress)
+
+    StarParticles.forEach { star ->
+        val distance = star.distanceDp.dp.toPx() * flown
+        val sink = 24.dp.toPx() * progress * progress // slowly drifts down, like confetti
+        val x = center.x + cos(star.angleRad) * distance
+        val y = center.y + sin(star.angleRad) * distance + sink
+        val size = star.sizeDp.dp.toPx() * (1f - 0.4f * progress)
+
+        translate(x, y) {
+            rotate(star.spinDegrees * progress, Offset.Zero) {
+                scale(size, Offset.Zero) {
+                    drawPath(UnitStar, star.color, alpha)
+                    // A rounded outline softens the points of the star
+                    drawPath(
+                        UnitStar,
+                        star.color,
+                        alpha,
+                        Stroke(width = 0.3f, join = StrokeJoin.Round)
+                    )
+                }
+            }
+        }
+    }
+}
+
 /** Animations of an option tile, played when it is picked. */
 private class TileAnimation {
     /** How far the tile is lifted, in dp. */
@@ -364,6 +453,15 @@ private class TileAnimation {
 
     /** How far the tile is shifted to the right, in dp. */
     val shift = Animatable(0f)
+
+    /** Progress of the star burst, from 0 to 1. */
+    val burst = Animatable(0f)
+
+    /** A gentle burst of stars: they fly out from the tile, slowly sink, and fade away. */
+    suspend fun starBurst() {
+        burst.snapTo(0f)
+        burst.animateTo(1f, tween(STAR_BURST_DURATION_MS, easing = LinearOutSlowInEasing))
+    }
 
     /**
      * A jump: the tile stretches and flies up, falls back and lands with a squash (wider and
@@ -400,6 +498,7 @@ private class TileAnimation {
 }
 
 private const val JUMP_HEIGHT_DP = 16f
+private const val STAR_BURST_DURATION_MS = 1400
 private const val SHAKE_DISTANCE_DP = 10f
 private const val SHAKE_STEP_MS = 45
 private val SHAKE_STRENGTHS = listOf(-1f, 1f, -0.8f, 0.8f, -0.5f, 0.5f, -0.25f, 0.25f)
@@ -464,7 +563,12 @@ private fun OptionTile(
     val jumps = isCorrectOption && state.isCorrect == true
     val shakes = isSelected && !isCorrectOption
     LaunchedEffect(jumps) {
-        if (jumps) animation.jump()
+        if (jumps) {
+            coroutineScope {
+                launch { animation.jump() }
+                launch { animation.starBurst() }
+            }
+        }
     }
     LaunchedEffect(shakes) {
         if (shakes) animation.shake()
@@ -477,6 +581,11 @@ private fun OptionTile(
         enabled = enabled && !state.isAnswered,
         modifier = modifier
             .aspectRatio(1f)
+            // Drawn outside of (and over) the jumping tile, so that the stars are not squashed
+            .drawWithContent {
+                drawContent()
+                drawStarBurst(animation.burst.value)
+            }
             .graphicsLayer {
                 translationX = animation.shift.value.dp.toPx()
                 translationY = -animation.lift.value.dp.toPx()
